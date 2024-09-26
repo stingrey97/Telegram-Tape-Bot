@@ -1,0 +1,22 @@
+# IntelliJ IDEA Verzeichnisse und Dateien
+.idea
+*.iml
+config
+
+# Lokale Konfigurationsdateien
+*.env
+
+# Git-Dateien
+.git
+.gitignore
+
+# CI/CD Dateien
+.gitlab-ci.yml
+
+# Logs
+logs/
+*.log
+
+# Docker-Konfigurationsdateien
+Dockerfile
+.dockerignore
