@@ -31,7 +31,6 @@ public class Main {
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
             botsApplication.registerBot(apiKey, new TelegramBot());
-            logger.trace("Bot registered at Telegram-API");
             logger.info("Service is online");
             Thread.currentThread().join(); // Keeps service alive till it crashes or shutdown
         } catch (Exception e) {

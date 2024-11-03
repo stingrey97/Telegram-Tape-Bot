@@ -39,7 +39,7 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
                 return;
             }
 
-            logger.trace("New message: {}", context);
+            logger.info("New message received: {}", context);
 
             // If input is stateless command
             Handler commandHandler = CommandHandlerFactory.getCommandHandler(receivedText);

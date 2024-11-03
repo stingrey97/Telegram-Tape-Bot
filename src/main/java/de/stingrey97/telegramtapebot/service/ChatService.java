@@ -31,6 +31,7 @@ public class ChatService {
 
         try {
             telegramClient.execute(message);
+            logger.info("Message sent to ChatId '{}': {}", chatId, message);
             Thread.sleep(900);
         } catch (Exception e) {
             logger.error("Unknown error in reply method! Text was: '{}' by chatID: '{}'", text, chatId, e);
