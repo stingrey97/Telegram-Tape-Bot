@@ -54,7 +54,6 @@ public abstract class ApplicationException extends Exception {
 
     protected void informLogger(ChatContext context) {
         switch (warningLevel) {
-            case TRACE -> logger.trace(DEFAULT_LOGGING_MESSAGE, getErrorMessage(), context, getStackTrace());
             case DEBUG -> logger.debug(DEFAULT_LOGGING_MESSAGE, getErrorMessage(), context, getStackTrace());
             case INFO -> logger.info(DEFAULT_LOGGING_MESSAGE, getErrorMessage(), context, getStackTrace());
             case WARN -> logger.warn(DEFAULT_LOGGING_MESSAGE, getErrorMessage(), context, getStackTrace());
