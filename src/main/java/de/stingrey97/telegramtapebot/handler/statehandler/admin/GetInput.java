@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.Collections;
+import java.util.List;
 
 public class GetInput implements Handler {
     @Override
@@ -49,6 +50,19 @@ public class GetInput implements Handler {
                 return;
             }
             replyString = "Tape-ID " + input;
+
+        } else if (command.equals("/broadcast")) {
+            inputValid = !input.isBlank() && !input.isEmpty();
+            List<Long> chatIdsFromLoggedInUsers;
+            try {
+                chatIdsFromLoggedInUsers = ServiceFactory.getUserStateService().getChatIdsByLoggedInUsers();
+            } catch (DatabaseException e) {
+                e.handle(context);
+                return;
+            }
+            int countOfLoggedInUsers = chatIdsFromLoggedInUsers.size();
+            replyString = "Möchtest du diese Nachricht wirklich als broadcast an " + countOfLoggedInUsers + " eingeloggte Nutzer schicken?\nNachricht: " + input;
+
         } else {
             UserService userService = ServiceFactory.getUserService();
             try {
@@ -68,7 +82,12 @@ public class GetInput implements Handler {
             }
             context.saveDataInCache(context.getReceivedText(), 1);
 
-            String confirmation = String.format("Bist du sicher, dass du Command %s auf %s ausführen möchtest?\n", command, replyString);
+            String confirmation;
+            if (command.equals("/broadcast")) {
+                confirmation = replyString;
+            } else {
+                confirmation = String.format("Bist du sicher, dass du Command %s auf %s ausführen möchtest?\n", command, replyString);
+            }
             context.reply(confirmation, new ReplyKeyboardMarkup(Collections.singletonList(new KeyboardRow("Ja", "Abbrechen"))));
         } else {
             context.reply("Das war eine ungültige Eingabe 👀");

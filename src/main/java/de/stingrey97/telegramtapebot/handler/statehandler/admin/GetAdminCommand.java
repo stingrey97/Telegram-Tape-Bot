@@ -32,6 +32,7 @@ public class GetAdminCommand implements Handler {
             case "/resetUser" -> context.reply("Welcher /user (Chat) soll zurückgesetzt werden?");
             case "/newAdmin" -> context.reply("Wer ist der glückliche /user?");
             case "/removeAdmin" -> context.reply("Welcher /user soll kein Admin mehr sein?");
+            case "/broadcast" -> context.reply("Welche Nachricht soll an alle eingeloggten user gesendet werden?");
             case "/exit" -> {
                 try {
                     context.setUserState(State.LOGGED_IN);

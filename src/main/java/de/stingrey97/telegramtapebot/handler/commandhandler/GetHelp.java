@@ -45,6 +45,7 @@ public class GetHelp implements Handler {
                     /resetUser - Status eines ausgewählten Users zurücksetzen
                     /newAdmin - Neuen Admin hinzufügen
                     /removeAdmin - Admin entfernen
+                    /broadcast - Erstellt einen Broadcast zu allen eingeloggten Benutzern.
                     /exit - Adminmodus verlassen
                     """);
             default -> {

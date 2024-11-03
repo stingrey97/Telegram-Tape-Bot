@@ -4,15 +4,13 @@ import de.stingrey97.telegramtapebot.exceptions.DatabaseException;
 import de.stingrey97.telegramtapebot.handler.Handler;
 import de.stingrey97.telegramtapebot.handler.State;
 import de.stingrey97.telegramtapebot.model.ChatContext;
-import de.stingrey97.telegramtapebot.service.ServiceFactory;
-import de.stingrey97.telegramtapebot.service.TapeService;
-import de.stingrey97.telegramtapebot.service.UserService;
-import de.stingrey97.telegramtapebot.service.UserStateService;
+import de.stingrey97.telegramtapebot.service.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.Collections;
+import java.util.List;
 
 public class ConfirmInput implements Handler {
     @Override
@@ -98,6 +96,20 @@ public class ConfirmInput implements Handler {
                     }
                     if (success) context.reply("User ist kein Admin mehr.");
                     else context.reply("Fehler beim setzen des Admin-Status⚠️");
+                }
+
+                case "/broadcast" -> {
+                    List<Long> chatIdsFromLoggedInUsers;
+                    try {
+                        chatIdsFromLoggedInUsers = ServiceFactory.getUserStateService().getChatIdsByLoggedInUsers();
+                    } catch (DatabaseException e) {
+                        e.handle(context);
+                        return;
+                    }
+                    ChatService chatService = ServiceFactory.getChatService();
+                    for (Long chatId : chatIdsFromLoggedInUsers) {
+                        chatService.send(chatId, context.readDataFromCache(1));
+                    }
                 }
 
                 case "/exit" -> {

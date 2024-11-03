@@ -6,6 +6,11 @@ import de.stingrey97.telegramtapebot.exceptions.DatabaseException;
 import de.stingrey97.telegramtapebot.exceptions.IrreparableStateException;
 import de.stingrey97.telegramtapebot.handler.State;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.stingrey97.telegramtapebot.handler.State.*;
+
 public class UserStateService {
 
     private final UserStateDAO userStateDAO = DAOFactory.getUserStateDAO();
@@ -41,7 +46,8 @@ public class UserStateService {
 
     public boolean isLoggedIn(long chatId) throws DatabaseException, IrreparableStateException {
         return switch (getUserState(chatId)) {
-            case LOGGED_IN, GET_TITLE, GET_SUBJECT, REPLY_BY_TAPES, REPLY_FOR_TAPES, ADMIN, GET_INPUT, CONFIRM_INPUT -> true;
+            case LOGGED_IN, GET_TITLE, GET_SUBJECT, REPLY_BY_TAPES, REPLY_FOR_TAPES, ADMIN, GET_INPUT, CONFIRM_INPUT ->
+                    true;
             default -> false;
         };
     }
@@ -59,13 +65,22 @@ public class UserStateService {
 
     public void clearStatesForStartup() throws DatabaseException {
         State[] statesToReset = {State.LOGGED_OUT, State.VALIDATE_USERNAME, State.VALIDATE_PIN, State.AWAITING_DSGVO, State.AWAITING_ACTIVATION_CODE, State.REGISTER_USERNAME, State.REGISTER_PIN, State.ERROR_RETRIEVING_STATE};
-        State[] statesToLoggedIn = {State.GET_TITLE, State.GET_SUBJECT, State.REPLY_BY_TAPES, State.REPLY_FOR_TAPES, State.ADMIN, State.GET_INPUT, State.CONFIRM_INPUT};
+        State[] statesToLoggedIn = {GET_TITLE, State.GET_SUBJECT, State.REPLY_BY_TAPES, REPLY_FOR_TAPES, State.ADMIN, State.GET_INPUT, State.CONFIRM_INPUT};
 
         for (State state : statesToReset) {
             userStateDAO.setStateToState(state, State.FIRST_TIME_ON_SERVER);
         }
         for (State state : statesToLoggedIn) {
-            userStateDAO.setStateToState(state, State.LOGGED_IN);
+            userStateDAO.setStateToState(state, LOGGED_IN);
         }
+    }
+
+    public List<Long> getChatIdsByLoggedInUsers() throws DatabaseException {
+        State[] loggedInStates = {LOGGED_IN, GET_TITLE, GET_SUBJECT, REPLY_BY_TAPES, REPLY_FOR_TAPES, ADMIN, GET_INPUT, CONFIRM_INPUT};
+        List<Long> chatIds = new ArrayList<>();
+        for (State state : loggedInStates) {
+            chatIds.addAll(userStateDAO.getChatIdsByUserState(state));
+        }
+        return chatIds;
     }
 }

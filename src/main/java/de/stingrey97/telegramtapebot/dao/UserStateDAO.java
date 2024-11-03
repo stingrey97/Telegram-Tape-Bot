@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserStateDAO {
 
@@ -29,6 +31,22 @@ public class UserStateDAO {
             stmt.setString(2, state.name());
             stmt.setString(3, username);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    public List<Long> getChatIdsByUserState(State state) throws DatabaseException {
+        String query = "SELECT chat_id FROM user_states WHERE user_state = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, state.name());
+            List<Long> chatIds = new ArrayList<>();
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                chatIds.add(rs.getLong("chat_id"));
+            }
+            return chatIds;
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
