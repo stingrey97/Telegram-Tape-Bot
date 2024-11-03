@@ -3,7 +3,9 @@
     <!-- Console Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight([%level]) [%thread] %logger{36} - %msg %n%replace(%throwable){'\\n','\\n\t'}%n</pattern>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %highlight(%msg) %n%highlight(%ex{full})
+            </pattern>
         </encoder>
     </appender>
 
@@ -12,7 +14,9 @@
         <file>logs/app.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight([%level]) [%thread] %logger{36} - %msg %n%replace(%throwable){'\\n','\\n\t'}%n</pattern>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%level] [%thread] %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
