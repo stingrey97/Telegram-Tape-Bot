@@ -133,6 +133,7 @@ public class ConfirmInput implements Handler {
 
         } else {
             context.reply("Bitte benutze die Buttons!", new ReplyKeyboardMarkup(Collections.singletonList(new KeyboardRow("Ja", "Abbrechen"))));
+            return;
         }
         context.reply("Sonst noch etwas? /help", new ReplyKeyboardRemove(true));
     }
