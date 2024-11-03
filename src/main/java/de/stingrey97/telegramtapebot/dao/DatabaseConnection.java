@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnection {
+public class DatabaseConnection implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseConnection.class);
 
@@ -15,34 +15,41 @@ public class DatabaseConnection {
     private static final String USER;
     private static final String PASSWORD;
 
+    private static Connection connection;
+
     static {
 
         HOST = System.getenv("DB_HOST");
         USER = System.getenv("DB_USER");
         PASSWORD = System.getenv("DB_PASSWORD");
 
-        if (HOST == null) {
-            logger.error("DB_HOST is missing in the environment variables.");
-            throw new IllegalStateException("DB_HOST is required but not set in .env file");
-        }
-        if (USER == null) {
-            logger.error("DB_USER is missing in the environment variables.");
-            throw new IllegalStateException("DB_USER is required but not set in .env file");
-        }
-        if (PASSWORD == null) {
-            logger.error("DB_PASSWORD is missing in the environment variables.");
-            throw new IllegalStateException("DB_PASSWORD is required but not set in .env file");
+        if (HOST == null || USER == null || PASSWORD == null) {
+            logger.error("Database environment variables missing.");
+            throw new IllegalStateException("Database credentials are required in .env file");
         }
     }
 
     public static Connection getConnection() {
-        Connection connection = null;
         try {
-            connection = DriverManager.getConnection(HOST, USER, PASSWORD);
+            if (connection == null || connection.isClosed() || !connection.isValid(3)) {
+                connection = DriverManager.getConnection(HOST, USER, PASSWORD);
+            } else {
+                return connection;
+            }
         } catch (SQLException e) {
             logger.error("Could not establish connection to database: {}", HOST, e);
             System.exit(1);
         }
         return connection;
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (connection != null) connection.close();
+        } catch (SQLException e) {
+            connection = null;
+            logger.error("Error closing the database connection.");
+        }
     }
 }

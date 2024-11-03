@@ -11,10 +11,10 @@ import java.sql.SQLException;
 
 public class UserStateDAO {
 
-    private final Connection connection;
-
-    UserStateDAO(Connection connection) {
-        this.connection = connection;
+    /**
+     * Package private constructor
+     */
+    UserStateDAO() {
     }
 
     public void addUserState(long chatId, State state) throws DatabaseException {
@@ -23,7 +23,8 @@ public class UserStateDAO {
 
     public void addUserState(long chatId, State state, String username) throws DatabaseException {
         String query = "INSERT INTO user_states (chat_id, user_state, username) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, chatId);
             stmt.setString(2, state.name());
             stmt.setString(3, username);
@@ -35,7 +36,8 @@ public class UserStateDAO {
 
     public State getUserStateByChatId(long chatId) throws DatabaseException, IrreparableStateException {
         String query = "SELECT user_state FROM user_states WHERE chat_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, chatId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -54,7 +56,8 @@ public class UserStateDAO {
 
     public String getUsernameByChatId(long chatId) throws DatabaseException {
         String query = "SELECT username FROM user_states WHERE chat_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, chatId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -68,7 +71,8 @@ public class UserStateDAO {
 
     public long getChatIdByUsername(String username) throws DatabaseException {
         String query = "SELECT chat_id FROM user_states WHERE username = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -82,7 +86,8 @@ public class UserStateDAO {
 
     public void updateUserState(long chatId, State newState) throws DatabaseException {
         String query = "UPDATE user_states SET user_state = ? WHERE chat_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newState.name());
             stmt.setLong(2, chatId);
             stmt.executeUpdate();
@@ -93,7 +98,8 @@ public class UserStateDAO {
 
     public void updateUsername(long chatId, String newUsername) throws DatabaseException {
         String query = "UPDATE user_states SET username = ? WHERE chat_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newUsername);
             stmt.setLong(2, chatId);
             stmt.executeUpdate();
@@ -104,7 +110,8 @@ public class UserStateDAO {
 
     public void deleteUserState(long chatId) throws DatabaseException {
         String query = "DELETE FROM user_states WHERE chat_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setLong(1, chatId);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -114,7 +121,8 @@ public class UserStateDAO {
 
     public void setStateToState(State currentStates, State targetStates) throws DatabaseException {
         String query = "UPDATE user_states SET user_state = ? WHERE user_state = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, targetStates.toString());
             stmt.setString(2, currentStates.toString());
             stmt.executeUpdate();

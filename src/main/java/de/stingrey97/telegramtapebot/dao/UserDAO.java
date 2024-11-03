@@ -11,15 +11,16 @@ import java.util.List;
 
 public class UserDAO {
 
-    private final Connection connection;
-
-    UserDAO(Connection connection) {
-        this.connection = connection;
+    /**
+     * Package private constructor
+     */
+    UserDAO() {
     }
 
     public void addUser(String username, String pin) throws DatabaseException {
         String query = "INSERT INTO users (username, pin) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, pin);
             stmt.executeUpdate();
@@ -31,7 +32,8 @@ public class UserDAO {
     public List<String> getAllUsernames() throws DatabaseException {
         String query = "SELECT username FROM users";
         List<String> usernames = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 usernames.add(rs.getString("username"));
@@ -44,7 +46,8 @@ public class UserDAO {
 
     public boolean userExists(String username) throws DatabaseException {
         String query = "SELECT * FROM users WHERE username = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -59,7 +62,8 @@ public class UserDAO {
 
     public String getPinByUsername(String username) throws DatabaseException {
         String query = "SELECT pin FROM users WHERE username = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -73,7 +77,8 @@ public class UserDAO {
 
     public void updatePin(String username, String newPin) throws DatabaseException {
         String query = "UPDATE users SET pin = ? WHERE username = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, newPin);
             stmt.setString(2, username);
             stmt.executeUpdate();
@@ -85,7 +90,8 @@ public class UserDAO {
     public int deleteUser(String username) throws DatabaseException {
         String query = "DELETE FROM users WHERE username = ?";
         int affectedRows;
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             affectedRows = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -96,7 +102,8 @@ public class UserDAO {
 
     public boolean getAdminStatusByUsername(String username) throws DatabaseException {
         String query = "SELECT is_admin FROM users WHERE username = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -111,7 +118,8 @@ public class UserDAO {
     public int setAdminStatusByUsername(String username, boolean isAdmin) throws DatabaseException {
         String query = "UPDATE users SET is_admin = ? WHERE username = ?";
         int affectedRows;
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setBoolean(1, isAdmin);
             stmt.setString(2, username);
             affectedRows = stmt.executeUpdate();

@@ -1,7 +1,5 @@
 package de.stingrey97.telegramtapebot.dao;
 
-import java.sql.Connection;
-
 public class DAOFactory {
 
     private static final UserDAO userDAO;
@@ -9,10 +7,9 @@ public class DAOFactory {
     private static final TapeDAO tapeDAO;
 
     static {
-        Connection connection = DatabaseConnection.getConnection();
-        userDAO = new UserDAO(connection);
-        userStateDAO = new UserStateDAO(connection);
-        tapeDAO = new TapeDAO(connection);
+        userDAO = new UserDAO();
+        userStateDAO = new UserStateDAO();
+        tapeDAO = new TapeDAO();
     }
 
     public static UserDAO getUserDAO() {

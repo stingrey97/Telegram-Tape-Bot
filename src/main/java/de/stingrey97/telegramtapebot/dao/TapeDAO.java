@@ -11,15 +11,16 @@ import java.util.List;
 
 public class TapeDAO {
 
-    private final Connection connection;
-
-    TapeDAO(Connection connection) {
-        this.connection = connection;
+    /**
+     * Package private constructor
+     */
+    TapeDAO() {
     }
 
     public int addTape(String title, String addedBy, String addedFor) throws DatabaseException {
         String query = "INSERT INTO tapes (title, by_username, for_username) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, title);
             stmt.setString(2, addedBy);
             stmt.setString(3, addedFor);
@@ -39,7 +40,8 @@ public class TapeDAO {
 
     public Tape getTapeById(int id) throws DatabaseException {
         String query = "SELECT id, title, by_username, for_username, date_added FROM tapes WHERE id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -66,7 +68,8 @@ public class TapeDAO {
     public int markTapeAsDeleted(int tapeId) throws DatabaseException {
         String query = "UPDATE tapes SET title = 'deleted', by_username = 'deleted', for_username = 'deleted' WHERE id = ?";
         int affectedRows;
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, tapeId);
             affectedRows = stmt.executeUpdate();
         } catch (SQLException e) {
@@ -108,7 +111,8 @@ public class TapeDAO {
 
     @NotNull
     private List<Tape> getTapesWithParameter(String username, String query) throws DatabaseException {
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
             return mapResultSetToTapes(rs);
@@ -119,7 +123,8 @@ public class TapeDAO {
 
     @NotNull
     private List<Tape> executeQuery(String query) throws DatabaseException {
-        try (PreparedStatement stmt = connection.prepareStatement(query);
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             return mapResultSetToTapes(rs);
         } catch (SQLException e) {
