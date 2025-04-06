@@ -115,6 +115,14 @@ public class ChatContext {
         return receivedText;
     }
 
+    public void toggleSubscription() throws DatabaseException {
+        userService.toggleSubscription(username);
+    }
+
+    public boolean isSubscribed() throws DatabaseException {
+        return userService.isSubscribedByUsername(username);
+    }
+
     @Override
     public String toString() {
         State state;

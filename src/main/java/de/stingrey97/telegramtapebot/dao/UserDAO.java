@@ -128,4 +128,51 @@ public class UserDAO {
         }
         return affectedRows;
     }
+
+    public List<Long> getChatIdsWithSubscriptionFlag(int flag) throws DatabaseException {
+        String query = "SELECT chat_id FROM user_states us JOIN users u ON us.username = u.username WHERE subscription = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, flag);
+            List<Long> chatIds = new ArrayList<>();
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                chatIds.add(rs.getLong("chat_id"));
+            }
+            return chatIds;
+
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    public boolean getSubscriptionFlagByUsername(String username) throws DatabaseException {
+        String query = "SELECT subscription FROM users WHERE username = ?";
+        int result = -1;
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("subscription");
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+        if (result == -1)
+            throw new IllegalStateException("User: " + username + " - failed to switch subscription flag.");
+        return result == 1;
+    }
+
+    public void setSubscriptionFlagByUsername(String username, boolean wantsSubscription) throws DatabaseException {
+        String query = "UPDATE users SET subscription = ? WHERE username = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setBoolean(1, wantsSubscription);
+            stmt.setString(2, username);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
 }

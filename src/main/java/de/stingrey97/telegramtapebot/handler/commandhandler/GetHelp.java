@@ -35,8 +35,8 @@ public class GetHelp implements Handler {
                     /all - Zeigt alle Sextapes an
                     /about - Zeigt alle Sextapes über jemanden an
                     /by - Zeigt alle Sextapes von jemanden an
+                    /subscription - Empfang von neues Sextapes aktiveren bzw. deaktivieren
                     
-                    Um neue Sextapes hinzuzufügen, schreibe sie einfach in den Chat!
                     """);
             case ADMIN -> helpText.append("""
                     Aktionen für Admins:

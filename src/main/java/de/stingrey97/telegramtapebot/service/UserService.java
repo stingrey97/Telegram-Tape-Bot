@@ -21,6 +21,10 @@ public class UserService {
         return userDAO.getAllUsernames();
     }
 
+    public List<Long> getAllSubscribedUser() throws DatabaseException {
+        return userDAO.getChatIdsWithSubscriptionFlag(1);
+    }
+
     public boolean userExists(String username) throws DatabaseException {
         return userDAO.userExists(username);
     }
@@ -43,5 +47,14 @@ public class UserService {
 
     public boolean deleteUser(String username) throws DatabaseException {
         return userDAO.deleteUser(username) == 1;
+    }
+
+    public void toggleSubscription(String username) throws DatabaseException {
+        boolean isSubscribed = userDAO.getSubscriptionFlagByUsername(username);
+        userDAO.setSubscriptionFlagByUsername(username, !isSubscribed);
+    }
+
+    public boolean isSubscribedByUsername(String username) throws DatabaseException {
+        return userDAO.getSubscriptionFlagByUsername(username);
     }
 }

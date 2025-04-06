@@ -77,6 +77,19 @@ public class LoggedIn implements Handler {
                 }
                 context.reply("Tapes von wem sollen angezeigt werden?");
             }
+            case "/subscription" -> {
+                try {
+                    context.toggleSubscription();
+                    boolean isNowSubscribed = context.isSubscribed();
+                    if (isNowSubscribed) {
+                        context.reply("Cool! 😎 Du erhältst jetzt automatische Benachrichtigungen zu neuen Tapes.");
+                    } else {
+                        context.reply("Ok. ☹️ Du erhältst keine Benachrichtigungen mehr zu neues Tapes.");
+                    }
+                } catch (DatabaseException e) {
+                    e.handle(context);
+                }
+            }
             default -> context.reply("Das war kein gültiger Befehl. Was möchtest Du tun? Nutze /help");
         }
     }

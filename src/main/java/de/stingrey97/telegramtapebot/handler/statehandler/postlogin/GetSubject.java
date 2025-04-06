@@ -5,9 +5,12 @@ import de.stingrey97.telegramtapebot.handler.Handler;
 import de.stingrey97.telegramtapebot.handler.State;
 import de.stingrey97.telegramtapebot.model.ChatContext;
 import de.stingrey97.telegramtapebot.model.Tape;
+import de.stingrey97.telegramtapebot.service.ChatService;
 import de.stingrey97.telegramtapebot.service.ServiceFactory;
 import de.stingrey97.telegramtapebot.service.TapeService;
 import de.stingrey97.telegramtapebot.service.UserService;
+
+import java.util.List;
 
 public class GetSubject implements Handler {
     @Override
@@ -48,8 +51,19 @@ public class GetSubject implements Handler {
                 return;
             }
 
-            // TODO
-            // Broadcast new tape to all logged in users which have the abo flag
+            // Broadcast to all subscribers
+            try {
+                List<Long> chatIdsFromSubscribers = ServiceFactory.getUserService().getAllSubscribedUser();
+                ChatService chatService = ServiceFactory.getChatService();
+                for (Long chatId : chatIdsFromSubscribers) {
+                    if (chatId.equals(context.getChatID())) continue;
+                    chatService.send(chatId, "Neues Tape!\n" + newTape.toString());
+                }
+            } catch (DatabaseException e) {
+                // LOL richtig gefuscht, hier sollte eigentlich ein Logger hin
+                System.err.println("FAILED TO BROADCAST NEW TAPE @GetSubject.java!!!");
+            }
+
 
             context.reply("Neues Tape hinzugefügt ✅");
             context.reply(newTape.toString());
