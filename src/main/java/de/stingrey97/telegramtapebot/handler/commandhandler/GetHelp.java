@@ -35,7 +35,7 @@ public class GetHelp implements Handler {
                     /all - Zeigt alle Sextapes an
                     /about - Zeigt alle Sextapes über jemanden an
                     /by - Zeigt alle Sextapes von jemanden an
-                    /subscription - Empfang von neues Sextapes aktiveren bzw. deaktivieren
+                    /subscription - Empfang von Benachrichtigungen zu neuen Sextapes aktiveren bzw. deaktivieren
                     
                     """);
             case ADMIN -> helpText.append("""
