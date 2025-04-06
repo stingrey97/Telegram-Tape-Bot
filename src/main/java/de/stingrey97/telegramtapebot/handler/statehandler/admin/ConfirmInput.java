@@ -110,6 +110,12 @@ public class ConfirmInput implements Handler {
                     for (Long chatId : chatIdsFromLoggedInUsers) {
                         chatService.send(chatId, context.readDataFromCache(1));
                     }
+                    try {
+                        context.setUserState(State.ADMIN);
+                    } catch (DatabaseException e) {
+                        e.handle(context);
+                        return;
+                    }
                 }
 
                 case "/exit" -> {
