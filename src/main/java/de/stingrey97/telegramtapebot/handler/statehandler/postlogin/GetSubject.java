@@ -47,6 +47,10 @@ public class GetSubject implements Handler {
                 e.handle(context);
                 return;
             }
+
+            // TODO
+            // Broadcast new tape to all logged in users which have the abo flag
+
             context.reply("Neues Tape hinzugefügt ✅");
             context.reply(newTape.toString());
         } else {
